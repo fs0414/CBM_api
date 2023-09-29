@@ -7,7 +7,17 @@ import (
   "github.com/joho/godotenv"
   "gorm.io/gorm"
   "gorm.io/driver/mysql"
+  "github.com/gin-gonic/gin"
 )
+
+func GetRouter() *gin.Engine {
+  r := gin.Default()
+  r.GET("/", func(c *gin.Context) {
+    c.String(http.StatusOK, "hello cbm to golang")
+  })
+
+  return r
+}
 
 func main() {
   godotenv.Load(".env")
@@ -21,20 +31,12 @@ func main() {
   db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
   if err != nil {
       panic("failed to connect to database")
-    }
+  }
     
-    
-    fmt.Println("database connect success")
-    
-    db.AutoMigrate()
-    
-    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, MYSQL_USER + "\n")
-        fmt.Fprintf(w, dsn + "\n")
-        // fmt.Fprintf(w, db + "\n")
-        fmt.Fprintf(w, "hello cbmApi to golang air")
-      })
+  fmt.Println("database connect success")
 
-  http.ListenAndServe(":8080", nil)
+  db.AutoMigrate()
 
+  router := GetRouter()
+  router.Run(":8080")
 }

@@ -43,9 +43,11 @@ type BorrowedBook struct {
 }
 
 type BorrowingWishList struct {
-	ID        uint `gorm:"primaryKey"`
-	UserID    uint `gorm:"not null"`
-	BookID    uint `gorm:"not null"`
+  gorm.Model
+
+	ID        uint      `gorm:"primaryKey"`
+	UserID    uint      `gorm:"not null"`
+	BookID    uint      `gorm:"not null"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

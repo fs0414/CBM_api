@@ -26,7 +26,7 @@ func DbInit() {
       panic("failed to connect to database")
   }
 
-  Db.AutoMigrate(&schema.User{}, &schema.Book{})
+  Db.AutoMigrate(&schema.User{}, &schema.Book{}, &schema.BorrowedBook{}, &schema.BorrowingWishList{})
   fmt.Println("gorm db connect")
 
 }

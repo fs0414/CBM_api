@@ -1,7 +1,7 @@
 version: "3"
 services:
   api:
-    container_name: go_container
+    container_name: cbm_api_container
     build:
       context: ./
     ports:
@@ -11,12 +11,12 @@ services:
       - ./:/go/src
 
   db:
-    container_name: bcm_db_container
+    container_name: cbm_db_container
     image: mysql:8.0
     ports:
       - 3306:3306
     volumes:
-      - bcm-dev-db-volume:/var/lib/mysql
+      - cbm-dev-db-volume:/var/lib/mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -24,4 +24,4 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
 volumes:
-  bcm-dev-db-volume:
+  cbm-dev-db-volume:

@@ -44,3 +44,8 @@ type BorrowingWishList struct {
 	UserID    uint      `gorm:"not null"`
 	BookID    uint      `gorm:"not null"`
 }
+
+type LoginRequest struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}

@@ -18,7 +18,7 @@ func DbInit() {
   MYSQL_PASSWORD := os.Getenv("MYSQL_PASSWORD")
   MYSQL_DATABASE := os.Getenv("MYSQL_DATABASE")
   MYSQL_IP := os.Getenv("MYSQL_IP")
-  dsn := MYSQL_USER + ":" + MYSQL_PASSWORD + "@" + MYSQL_IP + "/" + MYSQL_DATABASE
+  dsn := MYSQL_USER + ":" + MYSQL_PASSWORD + "@" + MYSQL_IP + "/" + MYSQL_DATABASE + "?parseTime=true"
 
   Db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
   if err != nil {

@@ -8,43 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Register(c *gin.Context) {
-	var user schema.User
-	err := c.BindJSON(&user)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// パスワードをハッシュ化
-	hashedPassword, err := hashPassword(user.Password)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-		return
-	}
-
-	// ハッシュ化されたパスワードをセット
-	user.Password = hashedPassword
-
-	err = repository.CreateUser(&user)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "User registered successfully"})
-}
-
-func hashPassword(password string) (string, error) {
-	// パスワードをbcryptでハッシュ化
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-
-	return string(hashedPassword), nil
-}
-
 func Login(c *gin.Context) {
 	var loginRequest schema.LoginRequest
 	err := c.BindJSON(&loginRequest)
@@ -59,7 +22,14 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if user == nil || user.Password != loginRequest.Password {
+	if user == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	// パスワードのハッシュ値を比較
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequest.Password))
+	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}

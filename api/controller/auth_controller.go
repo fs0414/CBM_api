@@ -6,6 +6,7 @@ import (
 	"github.com/soramar/CBM_api/api/repository"
 	"github.com/soramar/CBM_api/model/schema"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 func Login(c *gin.Context) {
@@ -34,8 +35,21 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// ログイン成功の処理
-	// 例えば、トークンを生成して返すなど
+	token, err := repository.GenerateToken(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: true,
+		Secure:   true,
+		Path:     "/",
+		SameSite: http.SameSiteStrictMode,
+	})
 
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }

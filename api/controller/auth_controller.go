@@ -35,7 +35,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := repository.GenerateToken(user.ID)
+	token, err := repository.GenerateToken(user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return

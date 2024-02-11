@@ -11,7 +11,7 @@ import (
 var jwtSecretKey = []byte(os.Getenv("ACCESS_SECRET_KEY"))
 
 type Claims struct {
-	UserID uint `json:"userId"`
+	Email string `json:"Email"`
 	jwt.StandardClaims
 }
 
@@ -32,10 +32,10 @@ func GetUserByEmail(email string) (*schema.User, error) {
 	return &user, nil
 }
 
-func GenerateToken(userID uint) (string, error) {
+func GenerateToken(email string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
-		UserID: userID,
+		Email: email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

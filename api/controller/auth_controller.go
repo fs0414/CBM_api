@@ -55,5 +55,15 @@ func Login(c *gin.Context) {
 }
 
 func Logout(c *gin.Context) {
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Secure:   true,
+		Path:     "/",
+		SameSite: http.SameSiteStrictMode,
+	})
 
+	c.JSON(http.StatusOK, gin.H{"message": "Logout successful"})
 }

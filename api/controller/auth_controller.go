@@ -37,15 +37,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	claims := jwt.MapClaims{
-		"email": user.Email,
-		"exp":   time.Now().Add(time.Hour * 24).Unix(),
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	tokenString, err := token.SignedString([]byte(os.Getenv("ACCESS_SECRET_KEY")))
-
+	tokenString, err := GenerateToken(c, user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -76,4 +68,16 @@ func Logout(c *gin.Context) {
 	})
 
 	c.JSON(http.StatusOK, gin.H{"message": "Logout successful"})
+}
+
+func GenerateToken(c *gin.Context, user *schema.User) (string, error){
+	claims := jwt.MapClaims{
+		"email": user.Email,
+		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(os.Getenv("ACCESS_SECRET_KEY")))
+
+	return tokenString, err
 }

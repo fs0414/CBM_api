@@ -8,9 +8,29 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UserResponse struct {
+	ID    uint    `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
 func GetUsers(context *gin.Context) {
-	users := repository.GetAll() 
-	context.JSON(200, users)
+	users, err := repository.GetAllUsers()
+
+	if err != nil {
+		context.JSON(200, nil)
+		return
+	}
+	var responseUsers []UserResponse
+	for _, user := range users {
+			responseUser := UserResponse{
+					ID:    user.ID,
+					Name:  user.Name,
+					Email: user.Email,
+			}
+			responseUsers = append(responseUsers, responseUser)
+	}
+	context.JSON(200, responseUsers)
 }
 
 func Register(c *gin.Context) {

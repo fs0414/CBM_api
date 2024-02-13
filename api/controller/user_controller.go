@@ -11,7 +11,6 @@ import (
 type UserResponse struct {
 	ID    uint    `json:"id"`
 	Name  string `json:"name"`
-	Email string `json:"email"`
 }
 
 func GetUsers(context *gin.Context) {
@@ -26,7 +25,6 @@ func GetUsers(context *gin.Context) {
 			responseUser := UserResponse{
 					ID:    user.ID,
 					Name:  user.Name,
-					Email: user.Email,
 			}
 			responseUsers = append(responseUsers, responseUser)
 	}

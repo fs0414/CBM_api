@@ -11,7 +11,7 @@ func GetAllBooks() ([]schema.Book, error) {
 	db := database.Db
 
 	// Findメソッドを使用して全ユーザー情報を取得
-	result := db.Find(&books)
+	result := db.Preload("User").Find(&books)
 	if result.Error != nil {
 		fmt.Println("エラー発生:", result.Error)
 		return nil, result.Error // エラーがあれば、エラーを返す

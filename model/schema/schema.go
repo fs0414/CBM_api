@@ -26,6 +26,7 @@ type User struct {
 type Book struct {
 	gorm.Model
 	UserId		uint
+	User      User
 	Title  		string `gorm:"type:varchar(255);not null"`
 	ImageUrl  string `gorm:"type:varchar(255);not null"`
 	Loanable  bool   `gorm:"not null"`

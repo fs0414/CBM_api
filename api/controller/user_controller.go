@@ -28,7 +28,7 @@ func GetUsers(context *gin.Context) {
 			}
 			responseUsers = append(responseUsers, responseUser)
 	}
-	context.JSON(200, responseUsers)
+	context.JSON(http.StatusOK, gin.H{"Users": responseUsers})
 }
 
 func Register(c *gin.Context) {

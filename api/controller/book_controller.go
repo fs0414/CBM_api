@@ -38,5 +38,5 @@ func GetBooks(context *gin.Context) {
 		}
 		responseBooks = append(responseBooks, responseUser)
 	}
-	context.JSON(http.StatusOK, gin.H{"books": responseBooks})
+	context.JSON(http.StatusOK, gin.H{"Books": responseBooks})
 }

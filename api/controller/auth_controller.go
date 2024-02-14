@@ -30,7 +30,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// パスワードのハッシュ値を比較
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequest.Password))
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})

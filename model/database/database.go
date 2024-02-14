@@ -30,8 +30,3 @@ func DbInit() {
   fmt.Println("gorm db connect")
 
 }
-
-// func AutoMigration() {
-//   fmt.Println("go auto migration")
-//   Db.AutoMigrate(schema.User{}, schema.Book{})
-// }

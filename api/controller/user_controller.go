@@ -39,14 +39,12 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// パスワードをハッシュ化
 	hashedPassword, err := hashPassword(user.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
 
-	// ハッシュ化されたパスワードをセット
 	user.Password = hashedPassword
 
 	err = repository.CreateUser(&user)
@@ -59,7 +57,6 @@ func Register(c *gin.Context) {
 }
 
 func hashPassword(password string) (string, error) {
-	// パスワードをbcryptでハッシュ化
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err

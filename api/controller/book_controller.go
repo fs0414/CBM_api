@@ -29,8 +29,8 @@ func GetBooks(context *gin.Context) {
 				ImageUrl: book.ImageUrl,
 				Loanable: book.Loanable,
 				User: struct {
-					ID   uint   `json:"id"` // "ID" から "id" へ
-					Name string `json:"name"` // "Name" から "name" へ
+					ID   uint   `json:"id"`
+					Name string `json:"name"`
 				}{
 					ID:   book.User.ID,
 					Name: book.User.Name,

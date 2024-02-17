@@ -17,7 +17,7 @@ func GetUsers(context *gin.Context) {
 	users, err := repository.GetAllUsers()
 
 	if err != nil {
-		context.JSON(200, nil)
+		context.JSON(http.StatusOK, nil)
 		return
 	}
 	var responseUsers []UserResponse
@@ -28,7 +28,7 @@ func GetUsers(context *gin.Context) {
 			}
 			responseUsers = append(responseUsers, responseUser)
 	}
-	context.JSON(http.StatusOK, gin.H{"Users": responseUsers})
+	context.JSON(http.StatusOK, responseUsers)
 }
 
 func Register(c *gin.Context) {

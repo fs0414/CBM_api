@@ -25,11 +25,11 @@ type User struct {
 
 type Book struct {
 	gorm.Model
-	UserId		uint		`validate:"required"`
+	UserId		uint	 `validate:"required"`
 	User      User
 	Title  		string `gorm:"type:varchar(255);not null" validate:"required"`
 	ImageUrl  string `gorm:"type:varchar(255);not null" validate:"required"`
-	Loanable  bool   `gorm:"not null" validate:"required"`
+	Loanable  bool   `gorm:"not null"                   validate:"required"`
 }
 
 type BorrowedBook struct {
@@ -47,6 +47,6 @@ type BorrowingWishList struct {
 }
 
 type LoginRequest struct {
-	Email    string `json:"email" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Email    string 		`json:"email"    validate:"required"`
+	Password string 		`json:"password" validate:"required"`
 }

@@ -19,3 +19,11 @@ func GetAllUsers() ([]schema.User, error) {
 	fmt.Printf("取得したユーザー数: %d\n", result.RowsAffected)
 	return users, nil
 }
+
+func CreateUser(user *schema.User) error {
+	err := database.Db.Create(&user).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

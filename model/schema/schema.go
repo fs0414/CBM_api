@@ -16,7 +16,7 @@ type User struct {
 	gorm.Model
 	Name              	string `gorm:"type:varchar(255);not null"                         validate:"required"`
 	Email             	string `gorm:"type:varchar(255);uniqueIndex;not null"             validate:"required,email"`
-	Password          	string `gorm:"type:varchar(255);not null"                         validate:"required,min=6"`
+	Password          	string `gorm:"type:varchar(255);not null"                         validate:"required,min=8"`
 	Role              	Role   `gorm:"type:ENUM('USER', 'ADMIN');default:'USER';not null" validate:"required"`
 	Books 							[]Book
 	BorrowedBooks 			[]BorrowedBook

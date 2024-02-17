@@ -10,7 +10,7 @@ func GetRouter() *gin.Engine {
 	r := gin.Default()
 
 	r.GET("/", controller.SayHello)
-	api := r.Group("/api", middleware.UserRegisteredMiddleware())
+	api := r.Group("/api", middleware.JWTAuthMiddleware())
 	auth := api.Group("auth")
 	{
 		auth.POST("/register", controller.Register)

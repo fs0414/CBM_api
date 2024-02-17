@@ -42,17 +42,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	http.SetCookie(c.Writer, &http.Cookie{
-		Name:     "jwt",
-		Value:    tokenString,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-		Secure:   true,
-		Path:     "/",
-		SameSite: http.SameSiteStrictMode,
-	})
-
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": tokenString})
 }
 
 func Logout(c *gin.Context) {
@@ -71,6 +61,7 @@ func Logout(c *gin.Context) {
 
 func generateToken(c *gin.Context, user *schema.User) (string, error){
 	claims := jwt.MapClaims{
+		"user_id": user.ID,
 		"email": user.Email,
 		"exp":   time.Now().Add(time.Hour * 24).Unix(),
 	}

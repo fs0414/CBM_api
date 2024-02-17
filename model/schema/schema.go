@@ -14,10 +14,10 @@ const (
 
 type User struct {
 	gorm.Model
-	Name 								string 	`gorm:"type:varchar(255);not null"`
-	Email    						string 	`gorm:"type:varchar(255);uniqueIndex;not null"`
-	Password 						string 	`gorm:"type:varchar(255);not null"`
-	Role 								Role 		`gorm:"type:ENUM('USER', 'ADMIN');default:'USER';not null"`
+	Name              	string `gorm:"type:varchar(255);not null"                         validate:"required"`
+	Email             	string `gorm:"type:varchar(255);uniqueIndex;not null"             validate:"required,email"`
+	Password          	string `gorm:"type:varchar(255);not null"                         validate:"required,min=6"`
+	Role              	Role   `gorm:"type:ENUM('USER', 'ADMIN');default:'USER';not null" validate:"required"`
 	Books 							[]Book
 	BorrowedBooks 			[]BorrowedBook
 	BorrowingWishLists 	[]BorrowingWishList
@@ -25,28 +25,28 @@ type User struct {
 
 type Book struct {
 	gorm.Model
-	UserId		uint
+	UserId		uint		`validate:"required"`
 	User      User
-	Title  		string `gorm:"type:varchar(255);not null"`
-	ImageUrl  string `gorm:"type:varchar(255);not null"`
-	Loanable  bool   `gorm:"not null"`
+	Title  		string `gorm:"type:varchar(255);not null" validate:"required"`
+	ImageUrl  string `gorm:"type:varchar(255);not null" validate:"required"`
+	Loanable  bool   `gorm:"not null" validate:"required"`
 }
 
 type BorrowedBook struct {
 	gorm.Model
-	UserID        uint      `gorm:"not null"`
-	BookID        uint      `gorm:"not null"`
-	CheckoutDate  time.Time `gorm:"not null"`
-	ReturnDueDate time.Time `gorm:"not null"`
+	UserID        uint      `gorm:"not null" validate:"required"`
+	BookID        uint      `gorm:"not null" validate:"required"`
+	CheckoutDate  time.Time `gorm:"not null" validate:"required"`
+	ReturnDueDate time.Time `gorm:"not null" validate:"required"`
 }
 
 type BorrowingWishList struct {
 	gorm.Model
-	UserID    uint      `gorm:"not null"`
-	BookID    uint      `gorm:"not null"`
+	UserID    uint      `gorm:"not null" validate:"required"`
+	BookID    uint      `gorm:"not null" validate:"required"`
 }
 
 type LoginRequest struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }

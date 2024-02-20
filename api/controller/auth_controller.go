@@ -5,17 +5,50 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/soramar/CBM_api/api/repository"
 	"github.com/soramar/CBM_api/model/schema"
+	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"os"
 	"time"
+	"strings"
 )
 
 func Login(c *gin.Context) {
 	var loginRequest schema.LoginRequest
+
 	err := c.BindJSON(&loginRequest)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	validate := validator.New()
+	var validationErrors = make(map[string][]string)
+
+	if err := validate.Struct(loginRequest); err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			var errorMessage string
+			fieldName := err.Field()
+			tag := err.Tag()
+
+			switch fieldName {
+			case "Email":
+				if tag == "required" {
+					errorMessage = "メールアドレスは必須です"
+				}
+			case "Password":
+				if tag == "required" {
+					errorMessage = "パスワードは必須です"
+				}
+			}
+
+			if errorMessage != "" {
+				fieldName = strings.ToLower(fieldName)
+				validationErrors[fieldName] = append(validationErrors[fieldName], errorMessage)
+			}
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{"validation_error": validationErrors})
 		return
 	}
 

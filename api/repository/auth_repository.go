@@ -51,3 +51,23 @@ func GenerateToken(email string) (string, error) {
 
 	return tokenString, err
 }
+
+func IsTokenInvalid(tokenString string) (bool) {
+	var invalidatedToken schema.InvalidatedToken
+	err := database.Db.Where("token = ?", tokenString).First(&invalidatedToken).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false
+		}
+		return false
+	}
+	return true
+}
+
+func CreateInvalidateToken(invalidatedToken *schema.InvalidatedToken) error {
+	err := database.Db.Create(&invalidatedToken).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

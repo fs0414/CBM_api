@@ -12,14 +12,19 @@ import (
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
-		fmt.Println("tokenString:", tokenString)
+
 		if tokenString == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization token is required"})
 			return
 		}
 
 		tokenString = tokenString[len("Bearer "):] // Remove "Bearer " prefix
-		fmt.Println("tokenString:", tokenString)
+
+		if isTokenInvalid := repository.IsTokenInvalid(tokenString); isTokenInvalid {
+			fmt.Println("repository.IsTokenInvalid after")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "The token is already signed out"})
+			return
+		}
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -29,8 +34,6 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return []byte(os.Getenv("ACCESS_SECRET_KEY")), nil
 		})
 
-		fmt.Println("err:", err)
-
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization token"})
 			return
@@ -39,6 +42,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			email, ok := claims["email"].(string)
 			user_id, ok_user := claims["user_id"].(string)
+			
 			if !ok && !ok_user {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 				return
@@ -49,7 +53,9 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 				return
 			}
 
-			c.Set("user_id", user_id) // Optionally pass email to the next middleware/handler
+			c.Set("claims", claims)
+			c.Set("tokenString", tokenString)
+			c.Set("user_id", user_id)
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		}

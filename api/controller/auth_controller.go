@@ -79,15 +79,47 @@ func Login(c *gin.Context) {
 }
 
 func Logout(c *gin.Context) {
-	http.SetCookie(c.Writer, &http.Cookie{
-		Name:     "jwt",
-		Value:    "",
-		Expires:  time.Unix(0, 0),
-		HttpOnly: true,
-		Secure:   true,
-		Path:     "/",
-		SameSite: http.SameSiteStrictMode,
-	})
+	claimsInterface, exists := c.Get("claims")
+	if !exists {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Claims not found"})
+			return
+	}
+
+	claims, ok := claimsInterface.(jwt.MapClaims)
+	if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Claims type assertion failed"})
+			return
+	}
+
+	tokenStringInterface, exists := c.Get("tokenString")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token not found"})
+		return
+	}
+
+	tokenString, ok := tokenStringInterface.(string)
+	if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Token type assertion failed"})
+			return
+	}
+
+	exp, ok := claims["exp"].(float64)
+	if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "`exp` type assertion failed"})
+			return
+	}
+	
+	expTime := time.Unix(int64(exp), 0)
+
+	var InvalidatedToken schema.InvalidatedToken
+
+	InvalidatedToken.Token = tokenString
+	InvalidatedToken.ExpiresAt = expTime
+
+	if err := repository.CreateInvalidateToken(&InvalidatedToken); err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Logout successful"})
 }

@@ -46,6 +46,12 @@ type BorrowingWishList struct {
 	BookID    uint      `gorm:"not null" validate:"required"`
 }
 
+type InvalidatedToken struct {
+	gorm.Model
+	Token     string    `gorm:"primaryKey" validate:"required"`
+	ExpiresAt time.Time `gorm:"not null" validate:"required"`
+}
+
 type LoginRequest struct {
 	Email    string 		`json:"email"    validate:"required"`
 	Password string 		`json:"password" validate:"required"`
